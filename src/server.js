@@ -1,7 +1,6 @@
 import http from "http";
 import SocketIO from "socket.io"
 import express from "express";
-import { doesNotReject } from "assert";
 
 const app = express();
 
@@ -18,16 +17,35 @@ app.get("/*", (req, res) => res.redirect("/"));
 const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
+const publicRooms = () => {
+    const { sids, rooms } = wsServer.sockets.adapter;
+
+    const publicRooms = [];
+
+    rooms.forEach((_, key) => {
+        if (sids.get(key) === undefined) {
+            publicRooms.push(key);
+        }
+    });
+
+    return publicRooms;
+}
+
 wsServer.on("connection", (socket) => {
     socket["nick"] = "Anonymous";
     socket.on("enter_room", (roomName, done) => {
         done();
         socket.join(roomName);
         socket.to(roomName).emit("welcome", socket.nick);
+        wsServer.sockets.emit("room_change", publicRooms());
     });
 
     socket.on("disconnecting", () => {
         socket.rooms.forEach(room => socket.to(room).emit("bye", socket.nick));
+    });
+
+    socket.on("disconnect", () => {
+        wsServer.sockets.emit("room_change", publicRooms());
     });
 
     socket.on("new_message", (msg, room, done) => {

@@ -76,3 +76,19 @@ socket.on("bye", (userNick) => {
 socket.on("send_message", (msg) => {
     addMessage(msg);
 });
+
+socket.on("room_change", (rooms) => {
+    const roomList = welcome.querySelector("ul");
+
+    // NOTE 기존 채팅룸 목록 초기화
+    roomList.innerHTML = "";
+
+    if (!rooms.length) return;
+
+    rooms.forEach((room) => {
+        const li = document.createElement("li");
+        
+        li.innerHTML = room;
+        roomList.appendChild(li);
+    });
+});
