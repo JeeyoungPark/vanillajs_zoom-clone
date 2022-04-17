@@ -1,6 +1,7 @@
 import http from "http";
 import SocketIO from "socket.io"
 import express from "express";
+import { doesNotReject } from "assert";
 
 const app = express();
 
@@ -16,6 +17,13 @@ app.get("/*", (req, res) => res.redirect("/"));
 
 const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
+
+wsServer.on("connection", (socket) => {
+    socket.on("enter_room", (roomName, done) => {
+        done();
+        socket.join(roomName);
+    });
+})
 
 const handleListen = () => console.log('Listening on http://localhost:3000');
 
