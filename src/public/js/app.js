@@ -24,6 +24,8 @@ const getMedia = async () => {
 getMedia();
 
 const handleMuteClick = () => {
+    myStream.getAudioTracks().forEach((track) => (track.enabled = !track.enabled));
+    
     if(!muted) {
         muteBtn.innerText = "Unmuted";
         muted = true;
@@ -34,6 +36,8 @@ const handleMuteClick = () => {
 }
 
 const handleCameraClick = () => {
+    myStream.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
+
     if(!cameraOff) {
         cameraBtn.innerText = "Turn Camera On";
         cameraOff = true;
