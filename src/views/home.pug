@@ -10,5 +10,10 @@ html(leng="en")
         header
             h1 Joom
         main
+            div#myStream
+            // NOTE playsinline: 모바일 브라우저에 필요한 속성. 모바일 기기를 사용할 때 전체화면이 되지 않고 웹사이트 안에서 실행되도록 함
+            video#myFace(autoplay, playsinline, width="400", height="400")
+            button#mute Mute
+            button#camera Turn Camera Off
         script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js")
