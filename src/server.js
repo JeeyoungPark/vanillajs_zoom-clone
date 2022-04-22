@@ -1,7 +1,6 @@
 import http from "http";
 import SocketIO from "socket.io"
 import express from "express";
-import { connect } from "http2";
 
 const app = express();
 
@@ -19,10 +18,13 @@ const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
-    socket.on("join_room", (roomName, done) => {
+    socket.on("join_room", (roomName) => {
         socket.join(roomName);
-        done();
-        socket.to(roomName).emit("welcome")
+        socket.to(roomName).emit("welcome");
+    });
+
+    socket.on("offer", (offer, roomName) => {
+        socket.to(roomName).emit("offer", offer);
     });
 });
 
